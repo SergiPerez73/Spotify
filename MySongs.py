@@ -2,12 +2,12 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd
 
-sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="16c7c999caa041fe96aa9e01c2abf86d",
-                                                           client_secret="4e10f9170b4444f2889bab3497806147"))
+sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="client-id",
+                                                           client_secret="client-secret"))
 
 pl_id = 'spotify:playlist:1BKF8qS6E9Ang6BPSagJyT'
-offset = 0
 
+offset = 0
 results = []
 
 while True:
