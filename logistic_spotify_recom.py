@@ -7,9 +7,6 @@ from sklearn.model_selection import train_test_split
 
 Data = pd.read_csv('PreprocessedDataset.csv')
 
-type_map = {'0.0': 0.0, '1.0': 1.0}
-Data["album_type"] = Data["album_type"].map(type_map)
-
 X = Data.drop(['mark','Unnamed: 0'],axis=1)
 
 y = Data['mark']
@@ -19,7 +16,7 @@ y = y.values
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.1, random_state=1234)
 
 X_train = torch.from_numpy(np.array(X_train).astype(np.float32))
-X_test = torch.from_numpy(np.array(X_train).astype(np.float32))
+X_test = torch.from_numpy(np.array(X_test).astype(np.float32))
 
 y_train = torch.from_numpy(y_train.astype(np.float32))
 y_test = torch.from_numpy(y_test.astype(np.float32))
@@ -49,12 +46,12 @@ model = LogisticRegression(n_features)
 # 2) Loss and optimizer
 criterion  = nn.BCELoss()
 
-learning_rate = 0.01
+learning_rate = 0.1
 optimizer = torch.optim.SGD(model.parameters(),lr = learning_rate)
 
 # 3) Train loop
 
-n_iterations = 100
+n_iterations = 20000
 
 X_accuracy = []
 Y_accuracy = []
@@ -75,9 +72,6 @@ for epoch in range(n_iterations):
     y_pred = model.forward(X_train)
     
     df = pd.DataFrame(y_pred.detach().numpy(), columns=['columna'])
-    print('hola')
-    print(df['columna'].isna().sum())
-    print('hola')
     loss = criterion(y_pred,y_train)
     loss.backward()
     optimizer.step()
@@ -87,7 +81,7 @@ for epoch in range(n_iterations):
         X_accuracy.append(epoch)
         Y_accuracy.append(test_accuracy().item())
     
-    if epoch % (int(n_iterations/4)) == 0 or epoch==n_iterations:
+    if epoch % (1000) == 0 or epoch==n_iterations:
         print(f'loss = {loss:.8f}')
 
 X_accuracy = np.array(X_accuracy)

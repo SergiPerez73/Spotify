@@ -32,10 +32,12 @@ def addEmbeddingsTodf(df,col):
     return df
 
 #Preprocess explicit
-df['explicit'] = df["explicit"].replace([False,True], [0.0,1.0])
+type_map = {False: 0.0, True: 1.0}
+df['explicit'] = df["explicit"].map(type_map)
 
 #Preprocess album_type
-df['album_type'] = df["album_type"].replace(['single','album'], [0.0,1.0])
+type_map = {'single': 0.0, 'album': 1.0, 'compilation': 1.0}
+df['album_type'] = df["album_type"].map(type_map)
 
 #Preprocess album_name
 df = addEmbeddingsTodf(df,'album_name')
