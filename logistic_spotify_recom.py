@@ -33,25 +33,29 @@ y_test = y_test.view(y_test.shape[0],1)
 class LogisticRegression(nn.Module):
     def __init__(self,n_input_features):
         super(LogisticRegression,self).__init__()
-        self.linear = nn.Linear(n_input_features,3) #number of features and only one output that is a probability
-        self.linear2 = nn.Linear(3,1)
+
+        self.l1 = nn.Linear(n_input_features, 16)
+        self.l2 = nn.Linear(16, 16)
+        self.l3 = nn.Linear(16, 1)
 
     def forward(self,x):
-        y_predicted1 = torch.sigmoid(self.linear(x))
-        y_predicted = torch.sigmoid(self.linear2(y_predicted1))
-        return torch.sigmoid(y_predicted)
+        y_predicted1 = torch.sigmoid(self.l1(x))
+        y_predicted2 = torch.sigmoid(self.l2(y_predicted1))
+        y_predicted3 = torch.sigmoid(self.l3(y_predicted2))
+
+        return torch.sigmoid(y_predicted3)
 
 model = LogisticRegression(n_features)
 
 # 2) Loss and optimizer
-criterion  = nn.BCELoss()
+criterion  = nn.MSELoss()
 
 learning_rate = 0.1
 optimizer = torch.optim.SGD(model.parameters(),lr = learning_rate)
 
 # 3) Train loop
 
-n_iterations = 20000
+n_iterations = 2000
 
 X_accuracy = []
 Y_accuracy = []
@@ -81,7 +85,7 @@ for epoch in range(n_iterations):
         X_accuracy.append(epoch)
         Y_accuracy.append(test_accuracy().item())
     
-    if epoch % (1000) == 0 or epoch==n_iterations:
+    if epoch % (500) == 0 or epoch==n_iterations:
         print(f'loss = {loss:.8f}')
 
 X_accuracy = np.array(X_accuracy)
