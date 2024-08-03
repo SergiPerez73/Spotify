@@ -10,3 +10,6 @@
 /SongsDataset.csv
 /PreprocessedDataset.csv
 /SongsFeatures.csv
+/OneSong.csv
+/OneSongPreprocessed.csv
+/__pycache__

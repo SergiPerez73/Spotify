@@ -18,7 +18,7 @@ def addEmbeddingsTodf(df,col):
     for i in range(1,len(words)):
         outputs = np.append(outputs,(getEmbedding(words[i])),axis=0)
         print(i)
-    tsne = TSNE(n_components=3, random_state=44,perplexity=50)
+    tsne = TSNE(n_components=3, random_state=44,perplexity=4)
     embeddings_2d = tsne.fit_transform(outputs)
 
     emb_df = pd.DataFrame(embeddings_2d, columns=[col+'1', col+'2', col+'3'])

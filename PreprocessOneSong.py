@@ -41,10 +41,10 @@ def getSongsFeatures(sp,track_ids):
     return df_SongsFeatures
 
 if __name__ == "__main__":
-    sp = createSpotifyApiSession("BQDJr93nMycXhF9ohBFBAtt_eFMMjWYI7e7e8Mcxd3LggnRCZRjBbVtovdiYHLMedk9IN6p2MOH8Qmi_nG1tPaq-95ka1D2ITZQMVKmsf1QI1nMIShYlYfoKhBKK7M27cS4LIZ3IIpXNY23V1K-5-topCT_ciAh1nJdAd6G9yaLKKrxhKtrwcPV5US9MDIiGVJn4sDNgA22JiTAiyF0"
+    sp = createSpotifyApiSession("BQD34URmIFXq6r6mKPNO00ECYyhcTktEGqRcZ1IZIkOYsChpo5lPqqtZJuwgzOSrLpPA8mJO8pEUCqyuj5TnDEfbLm9zs4rlsSHd9fPnb9B9-4owW0oICskIDbI8rkEs5vaa0XBooxN4FlCrHOJs7o-YFZ6LwCn7PurFY8FGGeeNV6pHCPrjpB6JakfivlfrZUOigcw9l5o8APUr6RU"
                                  ,'16c7c999caa041fe96aa9e01c2abf86d','4e10f9170b4444f2889bab3497806147')
 
-    track_ids = ['','']
+    track_ids = ['7u0Mn9qAgZxcSWm0db2PaG','3hfmh1XIlJp2Uis4kWboqJ','0DIcssPpatAMqFXLZCxZMN','4n93SK7dQsQVu9BM5QzvAx','0nky5lP13IyrlQEGEzGQZt']
     df_OneSong = getSongsFeatures(sp,track_ids)
 
     #Preprocess

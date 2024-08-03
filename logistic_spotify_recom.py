@@ -7,7 +7,10 @@ from sklearn.model_selection import train_test_split
 
 Data = pd.read_csv('PreprocessedDataset.csv')
 
+Data_valid = pd.read_csv('OneSongPreprocessed.csv') 
+
 X = Data.drop(['mark','Unnamed: 0'],axis=1)
+X_valid = Data_valid.drop(['id','Unnamed: 0'],axis=1)
 
 y = Data['mark']
 
@@ -16,6 +19,7 @@ y = y.values
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.1, random_state=1234)
 
 X_train = torch.from_numpy(np.array(X_train).astype(np.float32))
+X_valid = torch.from_numpy(np.array(X_valid).astype(np.float32))
 X_test = torch.from_numpy(np.array(X_test).astype(np.float32))
 
 y_train = torch.from_numpy(y_train.astype(np.float32))
@@ -25,6 +29,8 @@ n_features = X_train.shape[1]
 
 y_train = y_train.view(y_train.shape[0],1) #multiple rows, only 1 column
 y_test = y_test.view(y_test.shape[0],1)
+
+print(X_train)
 
 # 1) model
 
@@ -74,7 +80,6 @@ def test_accuracy():
 
 for epoch in range(n_iterations):
     y_pred = model.forward(X_train)
-    
     df = pd.DataFrame(y_pred.detach().numpy(), columns=['columna'])
     loss = criterion(y_pred,y_train)
     loss.backward()
@@ -102,3 +107,8 @@ with torch.no_grad():
     acc = y_predictedcls.eq(y_testcls).sum() / y_test.shape[0]
 
     print(f'accuracy = {acc:.4f}')
+
+with torch.no_grad():
+    y_predicted = model(X_valid)
+
+    print('y_valid',y_predicted)
