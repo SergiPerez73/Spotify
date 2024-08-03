@@ -79,7 +79,8 @@ def mergeFeaturesMarkSongs():
     df_merged.to_csv('SongsDataset.csv')
 
 if __name__ == "__main__":
-    sp = createSpotifyApiSession('','','')
+    sp = createSpotifyApiSession("BQDJr93nMycXhF9ohBFBAtt_eFMMjWYI7e7e8Mcxd3LggnRCZRjBbVtovdiYHLMedk9IN6p2MOH8Qmi_nG1tPaq-95ka1D2ITZQMVKmsf1QI1nMIShYlYfoKhBKK7M27cS4LIZ3IIpXNY23V1K-5-topCT_ciAh1nJdAd6G9yaLKKrxhKtrwcPV5US9MDIiGVJn4sDNgA22JiTAiyF0"
+                                 ,'16c7c999caa041fe96aa9e01c2abf86d','4e10f9170b4444f2889bab3497806147')
     df_SongsMark = getSongsMarkdf(sp)
     df_SongsFeatures = getSongsFeatures(sp,df_SongsMark)
     mergeFeaturesMarkSongs()

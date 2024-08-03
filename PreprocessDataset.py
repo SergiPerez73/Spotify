@@ -3,11 +3,6 @@ import numpy as np
 from transformers import BertTokenizer, BertModel
 from sklearn.manifold import TSNE
 
-df = pd.read_csv('SongsDataset.csv')
-df = df.drop(['Unnamed: 0'],axis=1)
-
-#Embeddings logic
-
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
 
@@ -31,28 +26,34 @@ def addEmbeddingsTodf(df,col):
     
     return df
 
-#Preprocess explicit
-type_map = {False: 0.0, True: 1.0}
-df['explicit'] = df["explicit"].map(type_map)
+def run(df,name):
 
-#Preprocess album_type
-type_map = {'single': 0.0, 'album': 1.0, 'compilation': 1.0}
-df['album_type'] = df["album_type"].map(type_map)
+    #Preprocess explicit
+    type_map = {False: 0.0, True: 1.0}
+    df['explicit'] = df["explicit"].map(type_map)
 
-#Preprocess album_name
-df = addEmbeddingsTodf(df,'album_name')
+    #Preprocess album_type
+    type_map = {'single': 0.0, 'album': 1.0, 'compilation': 1.0}
+    df['album_type'] = df["album_type"].map(type_map)
 
-#Preprocess release_date
-df = addEmbeddingsTodf(df,'release_date')
+    #Preprocess album_name
+    df = addEmbeddingsTodf(df,'album_name')
 
-#Preprocess artist_name
-df = addEmbeddingsTodf(df,'artist_name')
+    #Preprocess release_date
+    df = addEmbeddingsTodf(df,'release_date')
 
-#Preprocess name
-df = addEmbeddingsTodf(df,'name')
+    #Preprocess artist_name
+    df = addEmbeddingsTodf(df,'artist_name')
 
+    #Preprocess name
+    df = addEmbeddingsTodf(df,'name')
 
-df = df.drop(['album_name','release_date','artist_name','name'],axis=1)
+    df = df.drop(['album_name','release_date','artist_name','name'],axis=1)
 
+    df.to_csv(name)
 
-df.to_csv('PreprocessedDataset.csv')
+if __name__ == "__main__":
+    df = pd.read_csv('SongsDataset.csv')
+    df = df.drop(['Unnamed: 0'],axis=1)
+
+    run(df,'PreprocessedDataset.csv')
