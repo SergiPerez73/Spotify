@@ -38,17 +38,10 @@ def run(df,name):
     type_map = {'single': 0.0, 'album': 1.0, 'compilation': 1.0}
     df['album_type'] = df["album_type"].map(type_map)
 
-    #Preprocess album_name
-    df = addEmbeddingsTodf(df,'album_name')
+    embedding_features_list = ['album_name','release_date','artist_name','name']
 
-    #Preprocess release_date
-    df = addEmbeddingsTodf(df,'release_date')
-
-    #Preprocess artist_name
-    df = addEmbeddingsTodf(df,'artist_name')
-
-    #Preprocess name
-    df = addEmbeddingsTodf(df,'name')
+    for col in embedding_features_list:
+        df = addEmbeddingsTodf(df,col)
 
     df = df.drop(['album_name','release_date','artist_name','name'],axis=1)
 
