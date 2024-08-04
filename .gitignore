@@ -13,3 +13,4 @@
 /OneSong.csv
 /OneSongPreprocessed.csv
 /__pycache__
+/model.pt
