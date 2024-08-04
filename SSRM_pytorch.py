@@ -18,6 +18,12 @@ class LogisticRegression(nn.Module):
         return y_predicted2
 
 class SpotifySongsRecommendationModel:
+    def __init__(self):
+        self.x_axis = []
+        self.accuracy_test = []
+        self.loss_train = []
+        self.loss_test = []
+        self.loss_train2 = []
 
     def prepareData(self,test_size):
         Data = pd.read_csv('PreprocessedDataset.csv')
@@ -49,7 +55,7 @@ class SpotifySongsRecommendationModel:
         self.y_train = y_train.view(y_train.shape[0],1) #multiple rows, only 1 column
         self.y_test = y_test.view(y_test.shape[0],1)
 
-    def trainLoop(self,lr,n_iterations,print_freq,test_freq,model_path):
+    def trainLoop(self,lr,n_epochs,print_freq,test_freq,model_path,n_batches):
 
         n_features = self.X_train.shape[1]
         self.model = LogisticRegression(n_features)
@@ -58,32 +64,49 @@ class SpotifySongsRecommendationModel:
             self.model.load_state_dict(torch.load(model_path))
 
         self.criterion  = nn.MSELoss()
-
         optimizer = torch.optim.SGD(self.model.parameters(),lr = lr)
 
-        self.x_axis = []
-        self.accuracy_test = []
-        self.loss_train = []
-        self.loss_test = []
+        self.createBatches(n_batches)
 
-        
-        for epoch in range(n_iterations):
-            y_pred = self.model.forward(self.X_train)
-            loss = self.criterion(y_pred,self.y_train)
-            loss.backward()
-            optimizer.step()
-            optimizer.zero_grad()
+        for epoch in range(n_epochs):
+            print_done = False
+            test_done = False
 
-            if epoch % test_freq == 0 or epoch==n_iterations-1:
-                self.x_axis.append(epoch)
-                self.loss_train.append(loss.item())
-                self.accuracy_test.append(self.test_accuracy().item())
-                self.loss_test.append(self.test_loss().item())
-            
-            if epoch % print_freq == 0 or epoch==n_iterations-1:
-                [w,b,w,b] = self.model.parameters()
-                print(f'epoch {epoch}: loss = {loss:.8f}')
+            for batch in range(n_batches):
+                X_train_batch = self.X_train_batches[batch]
+                y_train_batch = self.y_train_batches[batch]
 
+                y_pred = self.model.forward(X_train_batch)
+                loss = self.criterion(y_pred,y_train_batch)
+                loss.backward()
+                optimizer.step()
+                optimizer.zero_grad()
+
+                if (epoch % test_freq == 0 or epoch==n_epochs-1) and not test_done:
+                    self.x_axis.append(epoch)
+                    self.loss_train.append(loss.item())
+                    self.accuracy_test.append(self.test_accuracy().item())
+                    self.loss_test.append(self.test_loss().item())
+                    self.loss_train2.append(self.train_loss().item())
+                
+                    test_done=True
+                
+                if (epoch % print_freq == 0 or epoch==n_epochs-1) and not print_done:
+                    print(f'epoch {epoch}: loss = {loss:.8f}')
+                    print_done=True
+
+    def createBatches(self,n_batches):
+        self.X_train_batches = []
+        self.y_train_batches = []
+        total_rows = self.X_train.shape[0]
+        batch_size = int(total_rows/n_batches)
+
+        for i in range(n_batches):
+            index_start = i*batch_size
+            index_end = min(i*batch_size + batch_size,total_rows)
+
+            self.X_train_batches.append(self.X_train[index_start:index_end])
+            self.y_train_batches.append(self.y_train[index_start:index_end])
 
     def showResults(self):
         plt.plot(self.x_axis,self.loss_train)
@@ -94,6 +117,10 @@ class SpotifySongsRecommendationModel:
 
         plt.plot(self.x_axis,self.loss_test)
         plt.show()
+
+        plt.plot(self.x_axis,self.loss_train2)
+        plt.show()
+
 
         with torch.no_grad():
             y_valid = self.model(self.X_valid)
@@ -118,12 +145,20 @@ class SpotifySongsRecommendationModel:
             loss = self.criterion(y_predicted,self.y_test)
 
             return loss
+    
+    def train_loss(self):
+        with torch.no_grad():
+            y_predicted = self.model(self.X_train)
+
+            loss = self.criterion(y_predicted,self.y_train)
+
+            return loss
 
 
 if __name__ == "__main__":
     SSRM = SpotifySongsRecommendationModel()
     SSRM.prepareData(0.1)
-    SSRM.trainLoop(0.1,20000,1000,1000,'model.pt')
+    SSRM.trainLoop(lr=0.1,n_epochs=20000,print_freq=1000,test_freq=2000,model_path='',n_batches=10)
     SSRM.showResults()
 
     model_parameters = SSRM.model.state_dict()

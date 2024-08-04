@@ -20,7 +20,7 @@ def getSongsFeatures(sp,track_ids):
         print(offset)
 
     df_SongsFeatures = pd.DataFrame(track_features)
-    df_SongsFeatures.to_csv('OneSong.csv')
+    df_SongsFeatures.to_csv('FewSongs.csv')
     return df_SongsFeatures
 
 def addEmbeddingsTodf(df,df_OneSong,col):
@@ -66,12 +66,11 @@ def run(df,df_OneSong,name):
     df_OneSong.to_csv(name)
 
 if __name__ == "__main__":
-    sp = CreateDataset.createSpotifyApiSession("BQAkWRmETTwKhvP4IM-YjUaySowh-J3b0WnM6-eHyW_GwI9lnNc8IWmqc2nge3c5dc43mVRGvmWz9k5HeqKN0EO8yNIisVRl3t42-SQEEmy7AU3Kfnf8nh760Zw4K55LRurG-wNb-hag0Nw2Uyr0YmzqhuwfLtZ2thYJOmO_WTypbHiKbjn2x0lswgYLkruEEgJ6_jMEV7J9ZRmkfyA"
-                                 ,'16c7c999caa041fe96aa9e01c2abf86d','4e10f9170b4444f2889bab3497806147')
+    sp = CreateDataset.createSpotifyApiSession('','','')
 
     track_ids = ['7u0Mn9qAgZxcSWm0db2PaG','3hfmh1XIlJp2Uis4kWboqJ','0DIcssPpatAMqFXLZCxZMN','4n93SK7dQsQVu9BM5QzvAx','0nky5lP13IyrlQEGEzGQZt']
     df_OneSong = getSongsFeatures(sp,track_ids)
 
     df = pd.read_csv('SongsDataset.csv')
 
-    run(df,df_OneSong,'OneSongPreprocessed.csv')
+    run(df,df_OneSong,'FewSongsPreprocessed.csv')
