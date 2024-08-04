@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from transformers import BertTokenizer, BertModel
-from sklearn.manifold import TSNE
+import umap
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
@@ -17,13 +17,15 @@ def addEmbeddingsTodf(df,col):
 
     for i in range(1,len(words)):
         outputs = np.append(outputs,(getEmbedding(words[i])),axis=0)
-        print(i)
-    tsne = TSNE(n_components=3, random_state=44,perplexity=4)
-    embeddings_2d = tsne.fit_transform(outputs)
+    
+    umap_model = umap.UMAP(n_components=3, random_state=42)
+    embeddings_2d = umap_model.fit_transform(outputs)
 
     emb_df = pd.DataFrame(embeddings_2d, columns=[col+'1', col+'2', col+'3'])
     df = pd.concat([df, emb_df], axis=1)
     
+    print('Finished ',col)
+
     return df
 
 def run(df,name):
