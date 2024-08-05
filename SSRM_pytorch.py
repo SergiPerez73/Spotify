@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+import argparse
 
 class LogisticRegression(nn.Module):
     def __init__(self,n_input_features):
@@ -154,11 +155,27 @@ class SpotifySongsRecommendationModel:
 
             return loss
 
+def addArgs(parser):
+    parser.add_argument('-test_size', type=int, default=0.1, required=False, 
+                        help='Number between 0 and 1 to determine size of the test when splitting the dataset')
+    parser.add_argument('-lr', type=int, default=0.1, required=False, help='Learning rate')
+    parser.add_argument('-n_epochs', type=int, default=20000, required=False, help='Number of epochs')
+    parser.add_argument('-print_freq', type=int, default=1000, required=False, help='Number of epochs between prints')
+    parser.add_argument('-test_freq', type=int, default=2000, required=False, help='Number of epochs between test')
+    parser.add_argument('-model_path', type=str, default='', required=False, help='Path of the model to load')
+    parser.add_argument('-n_batches', type=int, default=10, required=False, help='Number of batches')
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Spotify Songs Recommendation Model.')
+
+    addArgs(parser)
+
+    args = parser.parse_args()
+
     SSRM = SpotifySongsRecommendationModel()
-    SSRM.prepareData(0.1)
-    SSRM.trainLoop(lr=0.1,n_epochs=20000,print_freq=1000,test_freq=2000,model_path='',n_batches=10)
+    SSRM.prepareData(test_size=args.test_size)
+    SSRM.trainLoop(lr=args.lr,n_epochs=args.n_epochs,print_freq=args.print_freq,test_freq=args.test_freq,
+                   model_path=args.model_path,n_batches=args.n_batches)
     SSRM.showResults()
 
     model_parameters = SSRM.model.state_dict()

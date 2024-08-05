@@ -3,6 +3,7 @@ import PreprocessDataset
 import numpy as np
 import umap
 import CreateDataset
+import argparse
 
 def getSongsFeatures(sp,track_ids):
     track_features = {}
@@ -66,9 +67,18 @@ def run(df,df_OneSong,name):
     df_OneSong.to_csv(name)
 
 if __name__ == "__main__":
-    sp = CreateDataset.createSpotifyApiSession('','','')
+    parser = argparse.ArgumentParser(description='Preprocess few songs.')
 
-    track_ids = ['7u0Mn9qAgZxcSWm0db2PaG','3hfmh1XIlJp2Uis4kWboqJ','0DIcssPpatAMqFXLZCxZMN','4n93SK7dQsQVu9BM5QzvAx','0nky5lP13IyrlQEGEzGQZt']
+    CreateDataset.addArgs(parser)
+
+    args = parser.parse_args()
+
+    sp = CreateDataset.createSpotifyApiSession(args.token,args.client_id,args.client_secret)
+
+    df_track_ids = pd.read_csv('FewSongs.csv')
+
+    track_ids = list(df_track_ids['id'])
+
     df_OneSong = getSongsFeatures(sp,track_ids)
 
     df = pd.read_csv('SongsDataset.csv')

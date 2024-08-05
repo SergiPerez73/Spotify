@@ -1,7 +1,7 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd
-
+import argparse
 
 def createSpotifyApiSession(token, client_id,client_secret):
     sp = spotipy.Spotify(auth=token,
@@ -78,8 +78,19 @@ def mergeFeaturesMarkSongs():
 
     df_merged.to_csv('SongsDataset.csv')
 
+def addArgs(parser):
+    parser.add_argument('-client_id', type=str, default='', required=False, help='Client id')
+    parser.add_argument('-client_secret', type=str, default='', required=False, help='Client secret id')
+    parser.add_argument('-token', type=str, default='', required=False, help='Session token')
+
 if __name__ == "__main__":
-    sp = createSpotifyApiSession('','','')
+    parser = argparse.ArgumentParser(description='Create the dataset.')
+
+    addArgs(parser)
+
+    args = parser.parse_args()
+
+    sp = createSpotifyApiSession(args.token,args.client_id,args.client_secret)
     df_SongsMark = getSongsMarkdf(sp)
     df_SongsFeatures = getSongsFeatures(sp,df_SongsMark)
     mergeFeaturesMarkSongs()
