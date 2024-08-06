@@ -29,7 +29,7 @@ class SpotifySongsRecommendationModel:
     def prepareData(self,test_size):
         Data = pd.read_csv('PreprocessedDataset.csv')
 
-        Data_valid = pd.read_csv('OneSongPreprocessed.csv') 
+        Data_valid = pd.read_csv('FewSongsPreprocessed.csv') 
 
         X = Data.drop(['mark','Unnamed: 0'],axis=1)
         X_valid = Data_valid.drop(['id','Unnamed: 0'],axis=1)
@@ -156,9 +156,9 @@ class SpotifySongsRecommendationModel:
             return loss
 
 def addArgs(parser):
-    parser.add_argument('-test_size', type=int, default=0.1, required=False, 
+    parser.add_argument('-test_size', type=float, default=0.1, required=False, 
                         help='Number between 0 and 1 to determine size of the test when splitting the dataset')
-    parser.add_argument('-lr', type=int, default=0.1, required=False, help='Learning rate')
+    parser.add_argument('-lr', type=float, default=0.1, required=False, help='Learning rate')
     parser.add_argument('-n_epochs', type=int, default=20000, required=False, help='Number of epochs')
     parser.add_argument('-print_freq', type=int, default=1000, required=False, help='Number of epochs between prints')
     parser.add_argument('-test_freq', type=int, default=2000, required=False, help='Number of epochs between test')
