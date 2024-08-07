@@ -21,7 +21,6 @@ def getSongsFeatures(sp,track_ids):
         print(offset)
 
     df_SongsFeatures = pd.DataFrame(track_features)
-    df_SongsFeatures.to_csv('FewSongs.csv')
     return df_SongsFeatures
 
 def addEmbeddingsTodf(df,df_OneSong,col):

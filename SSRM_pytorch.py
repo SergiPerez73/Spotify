@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import argparse
+from torch.utils.tensorboard import SummaryWriter
 
 class LogisticRegression(nn.Module):
     def __init__(self,n_input_features):
@@ -24,7 +25,7 @@ class SpotifySongsRecommendationModel:
         self.accuracy_test = []
         self.loss_train = []
         self.loss_test = []
-        self.loss_train2 = []
+        self.accuracy_train = []
 
     def prepareData(self,test_size):
         Data = pd.read_csv('PreprocessedDataset.csv')
@@ -57,6 +58,7 @@ class SpotifySongsRecommendationModel:
         self.y_test = y_test.view(y_test.shape[0],1)
 
     def trainLoop(self,lr,n_epochs,print_freq,test_freq,model_path,n_batches):
+        writer = SummaryWriter('run_ssrm_pt')
 
         n_features = self.X_train.shape[1]
         self.model = LogisticRegression(n_features)
@@ -85,11 +87,21 @@ class SpotifySongsRecommendationModel:
 
                 if (epoch % test_freq == 0 or epoch==n_epochs-1) and not test_done:
                     self.x_axis.append(epoch)
-                    self.loss_train.append(loss.item())
-                    self.accuracy_test.append(self.test_accuracy().item())
-                    self.loss_test.append(self.test_loss().item())
-                    self.loss_train2.append(self.train_loss().item())
-                
+                    test_accuracy_v = self.test_accuracy().item()
+                    test_loss_v = self.test_loss().item()
+                    train_loss_v = self.train_loss().item()
+                    train_accuracy_v = self.train_accuracy().item()
+
+                    self.accuracy_test.append(test_accuracy_v)
+                    self.loss_test.append(test_loss_v)
+                    self.loss_train.append(train_loss_v)
+                    self.accuracy_train.append(train_accuracy_v)
+
+                    writer.add_scalar('Test/Accuracy',test_accuracy_v,epoch)
+                    writer.add_scalar('Test/Loss',test_loss_v,epoch)
+                    writer.add_scalar('Train/Loss',train_loss_v,epoch)
+                    writer.add_scalar('Train/Accuracy',train_accuracy_v,epoch)
+
                     test_done=True
                 
                 if (epoch % print_freq == 0 or epoch==n_epochs-1) and not print_done:
@@ -110,29 +122,34 @@ class SpotifySongsRecommendationModel:
             self.y_train_batches.append(self.y_train[index_start:index_end])
 
     def showResults(self):
-        plt.plot(self.x_axis,self.loss_train)
-        plt.show()
 
-        plt.plot(self.x_axis,self.accuracy_test)
-        plt.show()
+        plots = {'Loss train': self.loss_train,
+                 'Accuracy train': self.accuracy_train,
+                 'Loss test':self.loss_test,
+                 'Accuracy test':self.accuracy_test}
 
-        plt.plot(self.x_axis,self.loss_test)
-        plt.show()
+        for (name,plot) in plots.items():
+            plt.plot(self.x_axis,plot)
+            plt.grid()
+            plt.title(name)
+            plt.show()
 
-        plt.plot(self.x_axis,self.loss_train2)
-        plt.show()
-
-
+        print('\n \n Valid predictions: \n')
         with torch.no_grad():
             y_valid = self.model(self.X_valid)
+            results_valid = list(y_valid)
 
-            print('y_valid',y_valid)
+            df_few_songs = pd.read_csv('FewSongs.csv')
+
+            names = list(df_few_songs['name'])
+
+            for i, result in enumerate(results_valid):
+                print(names[i]+': '+str(round(float(result[0])*100,2))+'% de coincidencia')
 
     def test_accuracy(self):
         with torch.no_grad():
             y_predicted = self.model(self.X_test)
             y_predictedcls = y_predicted.round()
-
             y_testcls = self.y_test.round()
 
             acc = y_predictedcls.eq(y_testcls).sum() / self.y_test.shape[0]
@@ -142,7 +159,6 @@ class SpotifySongsRecommendationModel:
     def test_loss(self):
         with torch.no_grad():
             y_predicted = self.model(self.X_test)
-
             loss = self.criterion(y_predicted,self.y_test)
 
             return loss
@@ -150,10 +166,19 @@ class SpotifySongsRecommendationModel:
     def train_loss(self):
         with torch.no_grad():
             y_predicted = self.model(self.X_train)
-
             loss = self.criterion(y_predicted,self.y_train)
 
             return loss
+    
+    def train_accuracy(self):
+        with torch.no_grad():
+            y_predicted = self.model(self.X_train)
+            y_predictedcls = y_predicted.round()
+            y_traincls = self.y_train.round()
+
+            acc = y_predictedcls.eq(y_traincls).sum() / self.y_train.shape[0]
+
+            return acc
 
 def addArgs(parser):
     parser.add_argument('-test_size', type=float, default=0.1, required=False, 
