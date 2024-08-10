@@ -10,6 +10,7 @@
     * Obtaining data
     * Dataset preprocessing
     * Pytorch deep learning model
+* Author
 
 ## 1. Description
 
@@ -84,8 +85,8 @@ y = \sigma(W_2\sigma(W_1 x + b_1) + b_2)
 $$
 
 where W is a weight matrix. We have one per layer:
-* $ W_1 ∈ \mathbb{R}^{3\times 8}  $
-* $ W_2 ∈ \mathbb{R}^{3\times 1}  $
+* $W_1 ∈ \mathbb{R}^{3\times 8}$
+* $W_2 ∈ \mathbb{R}^{3\times 1}$
 
 $b$ is the bias and we have also one per layer: $b_1$ and $b_2$. $\sigma$ is the sigmoid function.
 
