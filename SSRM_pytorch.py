@@ -14,6 +14,7 @@ class LogisticRegression(nn.Module):
         self.linear = nn.Linear(n_input_features,3) #number of features and only one output that is a probability
         self.linear2 = nn.Linear(3,1)
 
+
     def forward(self,x):
         y_predicted1 = torch.sigmoid(self.linear(x))
         y_predicted2 = torch.sigmoid(self.linear2(y_predicted1))
@@ -21,6 +22,7 @@ class LogisticRegression(nn.Module):
 
 class SpotifySongsRecommendationModel:
     def __init__(self):
+        torch.manual_seed(42)
         self.x_axis = []
         self.accuracy_test = []
         self.loss_train = []

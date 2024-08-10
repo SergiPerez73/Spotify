@@ -7,14 +7,13 @@
 * Code execution
 * State of the art
 * Code implementation
-    * Obtaining data
-    * Dataset preprocessing
-    * Pytorch deep learning model
 * Author
 
 ## 1. Description
 
-Construct of a Deep Learning Model to recommendate your favourite Spotify Songs using Spotify for developers Web API. This Spotify API brinds us access to a lot of information from songs, albums and artists. Combining this information with the songs someone has listened the most, it is possible to create a dataset of songs with features of them and a score for every song depending on how much a user has listened to it. Then, we construct a Deep Learning Model that can predict a number from 0 to 1 of how much the user will like any song.
+Construct of a Deep Learning Model to recommendate your favourite Spotify Songs using Spotify for developers Web API. This Spotify API brinds us access to a lot of information from songs, albums and artists. 
+
+Combining this information with the songs someone has listened the most, it is possible to create a dataset of songs with features of them and a score for every song depending on how much a user has listened to it. Then, we construct a Deep Learning Model that can predict a number from 0 to 1 of how much the user will like any song.
 
 ## 2. Motivation
 
@@ -22,11 +21,29 @@ Searching for new music to listen can be challenging and a very tedious process.
 
 ## 3. Code execution
 
+### 3.1. Spotify API credentials
+
 Before executing the code, we need to have an account on Spotify for Developers. Inside it, we have to go to the Dashboard and create a new app. Once the app has been created, we would be given a Client ID and a Client Secret that we will need to execute to connect to the API from the code.
 
 As we not only want to extract public information, but also information of our most listened songs, we will need to bring access to ourselved to get a Token that will also be used when connecting to the API. To get that token, we can follow the instructions from the Documentation of the official website:
 
 [Spotify API: Access token](https://developer.spotify.com/documentation/web-api/concepts/access-token)
+
+### 3.2. Check specific songs
+
+Before executing the code, we are able to fill a `FewSongs.csv` with the tracks that we specifically want to know how much we will like (you can also include tracks you already listened to). 
+
+To fill that .csv, you have to indicate the id of the song and the name (the name is only important because it will appear once we execute the code next to the predicted score). The id of the song can be extracted from Spotify on the web as each link of a track has the id of the track.
+
+Here we have an example of the `FewSongs.csv`
+
+|     | id                      | name                            |
+|-----|-------------------------|---------------------------------|
+| 0   | 3hfmh1XIlJp2Uis4kWboqJ  | Blackeyed Blonde                |
+| 1   | 0DIcssPpatAMqFXLZCxZMN  | Antichrist                      |
+| 2   | 4n93SK7dQsQVu9BM5QzvAx  | I Can Do It With a Broken Heart |
+
+### 3.3. Execution scripts
 
 The pipeline of this project consists of 4 Python programs that can be executed in the correct order and indicating the arguments we want with a Shell or  Batch file.
 
@@ -39,6 +56,27 @@ The pipeline of this project consists of 4 Python programs that can be executed 
 #For Windows:
 .\ExecuteAll.bat
 ```
+On both scripts we have some arguments that we can change some arguments:
+
+* TOKEN, CLIENT_ID and CLIENT_SECRET are the Spotify API credentials that we need to obtain the necessary data.
+
+* TEST_SIZE is the proportion of the subset used to test from 0 to 1. Therefore, this also modifies the size of the training subset.
+
+* LR is the learning rate of the model.
+
+* N_EPOCHS is the number of epochs that we are going to train the data. I recommend a number between 1000 and 3000, but you can try different numbers.
+
+* PRINT_FREQ is the number of epochs that will pass between two prints where it will say the loss of the first batch of the train subset on that epoch.
+
+* TEST_FREQ is the number of epochs that will pass between two tests that will save information on plots that will be shown and saved.
+
+* MODEL_PATH is the path of the model that we want to load, empty if we don't want to load any model.
+
+* N_BATCHES is the number of batches in which the train subset will be divided.
+
+Each execution will save some information from the metrics obtained through the training. Each iteration that a test is done, it is analyzed the accuracy and the loss from the full training and test subset. 
+
+This metrics will be shown as plots at the end of the training and will also be saved to be visualized with tensorboard on the `run_ssrm_pt` folder.
 
 ## 4. State of the art
 
@@ -84,7 +122,7 @@ $$
 y = \sigma(W_2\sigma(W_1 x + b_1) + b_2)
 $$
 
-where W is a weight matrix. We have one per layer:
+where $W$ is a weight matrix. We have one per layer:
 * $W_1 ∈ \mathbb{R}^{3\times 8}$
 * $W_2 ∈ \mathbb{R}^{3\times 1}$
 
@@ -93,6 +131,14 @@ $b$ is the bias and we have also one per layer: $b_1$ and $b_2$. $\sigma$ is the
 ## 5. Code implementation
 
 As we mentioned, the implementation of the code is separated into 4 Python programs that create the dataset, preprocess the dataset, preprocess an extra dataset to know your coincidence with some specific songs that you select and the Pytorch impelemtation of the model with the neural network.
+
+* `CreateDataset.py` is the Python program that obtains the Spotify songs that you have listened the most and gets all necessary features from them.
+
+* `PreprocessDataset.py` converts all features to numerical features. Sparse features are transformed into embeddings and then we apply a dimensionality reduction to have only 3 dimensions per sparse feature.
+
+* `PreprocessFewSongs.py` obtains all the features from the specified features and preprocesses them the same way it is done on the `PreprocessDataset.py`. This allows the following program to do inference with this songs.
+
+* `SSRM_pytorch.py` is the program were we apply a standard scaling to all features and we create Pytorch tensors from the to fed the dataset, separated in multiple batches into the training loop. Then, some metrics from the execution and the score predicted for the tracks from `FewSongs.csv` are shown.
 
 ## Author
 
