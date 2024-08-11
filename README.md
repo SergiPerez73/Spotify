@@ -11,7 +11,7 @@
 
 ## 1. Description
 
-Construct of a Deep Learning Model to recommendate your favourite Spotify Songs using Spotify for developers Web API. This Spotify API brinds us access to a lot of information from songs, albums and artists. 
+Construct of a Deep Learning Model to recommend your favourite Spotify Songs using Spotify for developers Web API. This Spotify API brings us access to a lot of information from songs, albums and artists. 
 
 Combining this information with the songs someone has listened the most, it is possible to create a dataset of songs with features of them and a score for every song depending on how much a user has listened to it. Then, we construct a Deep Learning Model that can predict a number from 0 to 1 of how much the user will like any song.
 
@@ -25,7 +25,7 @@ Searching for new music to listen can be challenging and a very tedious process.
 
 Before executing the code, we need to have an account on Spotify for Developers. Inside it, we have to go to the Dashboard and create a new app. Once the app has been created, we would be given a Client ID and a Client Secret that we will need to execute to connect to the API from the code.
 
-As we not only want to extract public information, but also information of our most listened songs, we will need to bring access to ourselved to get a Token that will also be used when connecting to the API. To get that token, we can follow the instructions from the Documentation of the official website:
+As we not only want to extract public information, but also information of our most listened songs, we will need to bring access to ourselves to get a Token that will also be used when connecting to the API. To get that token, we can follow the instructions from the Documentation of the official website:
 
 [Spotify API: Access token](https://developer.spotify.com/documentation/web-api/concepts/access-token)
 
@@ -76,7 +76,7 @@ On both scripts we have some arguments that we can change some arguments:
 
 Each execution will save some information from the metrics obtained through the training. Each iteration that a test is done, it is analyzed the accuracy and the loss from the full training and test subset. 
 
-This metrics will be shown as plots at the end of the training and will also be saved to be visualized with tensorboard on the `run_ssrm_pt` folder.
+This metrics will be shown as plots at the end of the training and will also be saved to be visualized with Tensorboard on the `run_ssrm_pt` folder.
 
 ## 4. State of the art
 
@@ -88,13 +88,13 @@ Recommendation models are currently used by a lot of companies to know which con
 
 * Content-Based filtering analyzes features of the products matching them to user's preferences.
 
-Although Recommendation Systems have evolved to use Collaborative filtering, it needs a lot of information of which products likes each user. On our case, we don't have access to such information as we can only know which songs liked a user that has given us permission to extract its prefrences. 
+Although Recommendation Systems have evolved to use Collaborative filtering, it needs a lot of information of which products likes each user. On our case, we don't have access to such information as we can only know which songs liked a user that has given us permission to extract its preferences. 
 
 On the other hand, we can create a model that uses Content-Based filtering as we can obtain which songs we have listened to (ordered by the number of times we have listened them) and a lot of features from them thanks to Spotify API. Therefore, it has been decided that the best option for us is Content-Based filtering, which will also be much faster to train.
 
 ### 4.2. Features
 
-To train a Content-based model, we need some features from each song that describe it. This will make possible for the neural network to infer if we would like or not the song. More precisely, from each song we will obtain 4 dense features and 4 sparse features.
+To train a Content-based model, we need some features from each song that describe it. This will make it possible for the neural network to infer if we would like or not the song. More precisely, from each song we will obtain 4 dense features and 4 sparse features.
 
 * Dense features have numerical values. On our case, we will know:
     * The duration of the song in milliseconds
@@ -105,7 +105,7 @@ To train a Content-based model, we need some features from each song that descri
 * Sparse features are categorical features that will need to be transformed into embeddings:
     * Name of the song
     * Name of the album (it will be the name of the song if it's not inside an album)
-    * Realease date
+    * Release date
     * Name of the artist
 
 To treat dense features is very simple, as we already have numerical values for them. To treat sparse features we will obtain an embedding from each string that represents a category of a categorical feature. This means that we will obtain a numerical vector for them. This numerical feature will have 3 dimensions, that represent the position of each string of the feature in an abstract space that will have in closer positions similar strings.
