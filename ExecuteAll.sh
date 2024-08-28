@@ -6,7 +6,7 @@ export LR=0.1
 export N_EPOCHS=1000
 export PRINT_FREQ=2
 export TEST_FREQ=2
-export MODEL_PATH=''
+export MODEL_PATH='none'
 export N_BATCHES=10
 
 # python3 CreateDataset.py -client_id="$CLIENT_ID" -client_secret="$CLIENT_SECRET" -token="$TOKEN"

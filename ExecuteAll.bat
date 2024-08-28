@@ -7,7 +7,7 @@ set LR=0.1
 set N_EPOCHS=2000
 set PRINT_FREQ=50
 set TEST_FREQ=5
-set MODEL_PATH=""
+set MODEL_PATH="none"
 set N_BATCHES=10
 
 REM python.exe CreateDataset.py -client_id=%CLIENT_ID% -client_secret=%CLIENT_SECRET% -token=%TOKEN%
